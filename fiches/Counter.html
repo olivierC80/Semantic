@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours Python : collections.Counter</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1, h2, h3 {
+            color: #0056b3; /* Bleu foncé */
+            border-bottom: 2px solid #007bff; /* Bleu plus clair */
+            padding-bottom: 5px;
+            margin-top: 1.5em;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1em;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            font-size: 1.8em;
+        }
+
+        h3 {
+            font-size: 1.4em;
+            border-bottom: 1px dashed #ccc;
+            color: #17a2b8; /* Cyan */
+        }
+
+        code {
+            font-family: Consolas, 'Courier New', monospace;
+            background-color: #e9ecef;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 0.95em;
+            color: #c7254e; /* Rose foncé pour le code inline */
+        }
+
+        pre {
+            background-color: #282c34; /* Fond sombre pour les blocs de code */
+            color: #abb2bf; /* Texte gris clair */
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto; /* Barre de défilement si le code est trop long */
+            font-size: 0.9em;
+            border: 1px solid #ddd;
+        }
+
+        pre code {
+            background-color: transparent; /* Annule le fond du code inline dans pre */
+            color: inherit; /* Hérite la couleur du pre */
+            padding: 0;
+            border-radius: 0;
+            font-size: inherit;
+        }
+
+        .output {
+            font-style: italic;
+            color: #6c757d; /* Gris */
+            margin-left: 15px;
+            display: block; /* Pour que le commentaire soit sur une nouvelle ligne */
+            margin-top: 5px;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        strong {
+            color: #0056b3;
+        }
+
+        .qa-section dt {
+            font-weight: bold;
+            color: #28a745; /* Vert */
+            margin-top: 1em;
+        }
+
+        .qa-section dd {
+            margin-left: 2em;
+            margin-bottom: 1em;
+        }
+
+        .note {
+            background-color: #fff3cd; /* Jaune clair */
+            border-left: 5px solid #ffeeba; /* Jaune */
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <h1>Cours Python : <code>collections.Counter</code> - Le Spécialiste du Comptage</h1>
+
+        <!-- Introduction Section -->
+        <section id="introduction">
+            <h2>Introduction</h2>
+            <p>
+                Dans le module <code>collections</code> de Python se trouvent des types de données conteneurs spécialisés, qui offrent des alternatives aux conteneurs intégrés plus généraux comme <code>dict</code>, <code>list</code>, <code>set</code>, et <code>tuple</code>. Parmi eux, <code>Counter</code> est un outil extrêmement utile.
+            </p>
+
+            <h3>Qu'est-ce que <code>collections.Counter</code> ?</h3>
+            <p>
+                Un <code>Counter</code> est une sous-classe de <code>dict</code> (dictionnaire) spécialement conçue pour compter des objets "hachables" (c'est-à-dire des objets qui peuvent être utilisés comme clés de dictionnaire, comme les nombres, les chaînes de caractères, les tuples).
+            </p>
+            <p>
+                Imaginez que vous ayez une liste d'éléments et que vous vouliez savoir combien de fois chaque élément apparaît. Vous pourriez écrire une boucle et utiliser un dictionnaire standard, mais <code>Counter</code> rend cela beaucoup plus simple et efficace.
+            </p>
+
+            <h3>Pourquoi utiliser <code>Counter</code> ?</h3>
+            <ul>
+                <li><strong>Simplicité :</strong> Compter des éléments devient une opération très concise.</li>
+                <li><strong>Lisibilité :</strong> Le code est plus facile à comprendre car l'intention (compter) est explicite.</li>
+                <li><strong>Fonctionnalités Spécifiques :</strong> Il offre des méthodes utiles comme <code>most_common()</code> pour trouver les éléments les plus fréquents.</li>
+                <li><strong>Comportement Pratique :</strong> Si vous demandez le compte d'un élément qui n'existe pas, il retourne <code>0</code> au lieu de lever une erreur <code>KeyError</code>, ce qui simplifie le code.</li>
+                <li><strong>Opérations Mathématiques :</strong> Supporte des opérations comme l'addition, la soustraction, l'intersection et l'union entre compteurs.</li>
+            </ul>
+        </section>
+
+        <!-- Creation Section -->
+        <section id="creation">
+            <h2>Création d'un <code>Counter</code></h2>
+            <p>On importe d'abord la classe depuis le module <code>collections</code> :</p>
+            <pre><code class="language-python">from collections import Counter</code></pre>
+
+            <p>Il y a plusieurs façons de créer un objet <code>Counter</code> :</p>
+            <ol>
+                <li>
+                    <strong>À partir d'un itérable (liste, tuple, chaîne de caractères, etc.) :</strong> C'est l'usage le plus courant.
+                    <pre><code class="language-python"># Depuis une liste
+ma_liste = ['a', 'b', 'c', 'a', 'b', 'a']
+compteur_liste = Counter(ma_liste)
+print(f"Counter depuis une liste : {compteur_liste}")
+<span class="output"># Output: Counter depuis une liste : Counter({'a': 3, 'b': 2, 'c': 1})</span>
+
+# Depuis une chaîne de caractères (compte les caractères)
+ma_chaine = "bonjour le monde"
+compteur_chaine = Counter(ma_chaine)
+print(f"Counter depuis une chaîne : {compteur_chaine}")
+<span class="output"># Output: Counter depuis une chaîne : Counter({'o': 4, ' ': 2, 'n': 2, 'j': 1, 'u': 1, 'r': 1, 'l': 1, 'e': 1, 'm': 1, 'd': 1})
+# Remarque: L'ordre peut varier légèrement selon la version de Python avant 3.7</span>
+
+# Depuis un tuple
+mon_tuple = (1, 2, 3, 1, 2, 1)
+compteur_tuple = Counter(mon_tuple)
+print(f"Counter depuis un tuple : {compteur_tuple}")
+<span class="output"># Output: Counter depuis un tuple : Counter({1: 3, 2: 2, 3: 1})</span></code></pre>
+                </li>
+                <li>
+                    <strong>À partir d'un dictionnaire (mapping) :</strong> Où les clés sont les éléments et les valeurs sont leurs comptes.
+                    <pre><code class="language-python">mon_dict = {'pommes': 5, 'bananes': 2, 'oranges': 8}
+compteur_dict = Counter(mon_dict)
+print(f"Counter depuis un dict : {compteur_dict}")
+<span class="output"># Output: Counter depuis un dict : Counter({'oranges': 8, 'pommes': 5, 'bananes': 2})</span></code></pre>
+                </li>
+                <li>
+                    <strong>À partir d'arguments nommés (keyword arguments) :</strong>
+                    <pre><code class="language-python">compteur_kwargs = Counter(chats=4, chiens=8, poissons=1)
+print(f"Counter depuis kwargs : {compteur_kwargs}")
+<span class="output"># Output: Counter depuis kwargs : Counter({'chiens': 8, 'chats': 4, 'poissons': 1})</span></code></pre>
+                </li>
+            </ol>
+        </section>
+
+        <!-- Basic Usage Section -->
+        <section id="usage">
+            <h2>Utilisation Basique : Accéder aux Comptes</h2>
+            <p>
+                Comme <code>Counter</code> est une sous-classe de <code>dict</code>, vous pouvez accéder aux comptes comme vous le feriez avec un dictionnaire :
+            </p>
+            <pre><code class="language-python">compteur = Counter(['a', 'b', 'c', 'a', 'b', 'a']) # Counter({'a': 3, 'b': 2, 'c': 1})
+
+# Accéder au compte d'un élément existant
+print(f"Nombre de 'a' : {compteur['a']}")
+<span class="output"># Output: Nombre de 'a' : 3</span>
+
+# Accéder au compte d'un élément NON existant
+print(f"Nombre de 'd' : {compteur['d']}")
+<span class="output"># Output: Nombre de 'd' : 0 (PAS d'erreur !)</span>
+
+# Vérifier si un élément existe (comme un dict)
+print(f"'b' est dans le compteur ? {'b' in compteur}")
+<span class="output"># Output: 'b' est dans le compteur ? True</span>
+print(f"'z' est dans le compteur ? {'z' in compteur}")
+<span class="output"># Output: 'z' est dans le compteur ? False</span></code></pre>
+            <p class="note">
+                La caractéristique clé ici est que l'accès à un élément non existant (<code>compteur['d']</code>) renvoie <code>0</code> au lieu de lever une <code>KeyError</code>. C'est très pratique !
+            </p>
+        </section>
+
+        <!-- Methods Section -->
+        <section id="methods">
+            <h2>Méthodes Utiles de <code>Counter</code></h2>
+            <p>Les objets <code>Counter</code> ont plusieurs méthodes très pratiques :</p>
+
+            <h3>1. <code>elements()</code></h3>
+            <p>
+                Renvoie un <em>itérateur</em> qui produit chaque élément autant de fois que son compte. Les éléments sont renvoyés dans un ordre arbitraire.
+            </p>
+            <pre><code class="language-python">c = Counter(a=3, b=2, c=1)
+elements_iter = c.elements()
+
+# Pour voir le contenu, on peut le convertir en liste
+print(f"Éléments du Counter : {list(elements_iter)}")
+<span class="output"># Output: Éléments du Counter : ['a', 'a', 'a', 'b', 'b', 'c'] (l'ordre peut varier)</span></code></pre>
+
+            <h3>2. <code>most_common(n)</code></h3>
+            <p>
+                Renvoie une <em>liste</em> des <code>n</code> éléments les plus communs et leurs comptes, sous forme de tuples <code>(element, count)</code>, triés du plus commun au moins commun. Si <code>n</code> est omis ou <code>None</code>, renvoie <em>tous</em> les éléments triés par fréquence.
+            </p>
+            <pre><code class="language-python">texte = "beaucoup de mots ici beaucoup beaucoup"
+mots = texte.split()
+compteur_mots = Counter(mots)
+print(f"Compteur de mots : {compteur_mots}")
+<span class="output"># Output: Compteur de mots : Counter({'beaucoup': 3, 'de': 1, 'mots': 1, 'ici': 1})</span>
+
+# Les 2 mots les plus communs
+top_2 = compteur_mots.most_common(2)
+print(f"Les 2 mots les plus communs : {top_2}")
+<span class="output"># Output: Les 2 mots les plus communs : [('beaucoup', 3), ('de', 1)]
+# (Note: S'il y a égalité pour la n-ième place, l'ordre entre eux est arbitraire)</span>
+
+# Tous les mots triés par fréquence
+tous_tries = compteur_mots.most_common()
+print(f"Tous les mots triés : {tous_tries}")
+<span class="output"># Output: Tous les mots triés : [('beaucoup', 3), ('de', 1), ('mots', 1), ('ici', 1)]</span></code></pre>
+
+            <h3>3. <code>update(iterable_ou_mapping)</code></h3>
+            <p>
+                Ajoute les comptes d'un autre itérable ou d'un autre <code>Counter</code> (ou mapping) au compteur existant. C'est différent de la méthode <code>update()</code> d'un dictionnaire standard qui remplacerait les valeurs.
+            </p>
+            <pre><code class="language-python">c1 = Counter(a=3, b=1)
+print(f"c1 avant update : {c1}")
+
+# Mettre à jour avec un itérable
+c1.update(['a', 'b', 'b', 'c'])
+print(f"c1 après update(['a', 'b', 'b', 'c']) : {c1}")
+<span class="output"># Output: c1 après update(['a', 'b', 'b', 'c']) : Counter({'a': 4, 'b': 3, 'c': 1})
+# (a: 3+1=4, b: 1+2=3, c: 0+1=1)</span>
+
+# Mettre à jour avec un autre Counter
+c2 = Counter(a=1, b=2, d=5)
+c1.update(c2)
+print(f"c1 après update(c2) : {c1}")
+<span class="output"># Output: c1 après update(c2) : Counter({'a': 5, 'b': 5, 'd': 5, 'c': 1})
+# (a: 4+1=5, b: 3+2=5, c: 1+0=1, d: 0+5=5)</span></code></pre>
+
+            <h3>4. <code>subtract(iterable_ou_mapping)</code></h3>
+            <p>
+                Soustrait les comptes d'un autre itérable ou <code>Counter</code>. Les comptes peuvent devenir nuls ou négatifs.
+            </p>
+            <pre><code class="language-python">c1 = Counter(a=5, b=3, c=1)
+print(f"c1 avant subtract : {c1}")
+
+# Soustraire avec un itérable
+c1.subtract(['a', 'b', 'b', 'd'])
+print(f"c1 après subtract(['a', 'b', 'b', 'd']) : {c1}")
+<span class="output"># Output: c1 après subtract(['a', 'b', 'b', 'd']) : Counter({'a': 4, 'b': 1, 'c': 1, 'd': -1})
+# (a: 5-1=4, b: 3-2=1, c: 1-0=1, d: 0-1=-1)</span>
+
+# Soustraire avec un autre Counter
+c2 = Counter(a=2, b=5, c=1)
+c1.subtract(c2)
+print(f"c1 après subtract(c2) : {c1}")
+<span class="output"># Output: c1 après subtract(c2) : Counter({'a': 2, 'd': -1, 'b': -4, 'c': 0})
+# (a: 4-2=2, b: 1-5=-4, c: 1-1=0, d: -1-0=-1)</span></code></pre>
+        </section>
+
+        <!-- Operations Section -->
+        <section id="operations">
+            <h2>Opérations Arithmétiques et Ensemblistes</h2>
+            <p>Les <code>Counter</code> supportent des opérations pratiques :</p>
+            <ul>
+                <li><strong><code>+</code> (Addition) :</strong> Ajoute les comptes de deux compteurs. Ne garde que les résultats positifs (>= 1).</li>
+                <li><strong><code>-</code> (Soustraction) :</strong> Soustrait les comptes. Ne garde que les résultats strictement positifs (> 0).</li>
+                <li><strong><code>&</code> (Intersection) :</strong> Calcule le <em>minimum</em> des comptes pour chaque élément commun (résultat > 0).</li>
+                <li><strong><code>|</code> (Union) :</strong> Calcule le <em>maximum</em> des comptes pour chaque élément présent dans l'un ou l'autre compteur (résultat > 0).</li>
+            </ul>
+            <pre><code class="language-python">c1 = Counter(a=4, b=2, c=0, d=-2) # Note: On peut avoir 0 ou négatif après subtract()
+c2 = Counter(a=1, b=3, c=1, e=1)
+
+print(f"c1 = {c1}")
+print(f"c2 = {c2}")
+
+# Addition (+) - ajoute les comptes, garde seulement >= 1
+somme = c1 + c2
+print(f"c1 + c2 = {somme}")
+<span class="output"># Output: c1 + c2 = Counter({'b': 5, 'a': 5, 'c': 1, 'e': 1})</span>
+
+# Soustraction (-) - soustrait les comptes, garde seulement > 0
+difference = c1 - c2
+print(f"c1 - c2 = {difference}")
+<span class="output"># Output: c1 - c2 = Counter({'a': 3})</span>
+
+difference2 = c2 - c1
+print(f"c2 - c1 = {difference2}")
+<span class="output"># Output: c2 - c1 = Counter({'b': 1, 'c': 1, 'e': 1})</span>
+
+# Intersection (&) - minimum des comptes (pour les clés communes > 0)
+intersection = c1 & c2
+print(f"c1 & c2 = {intersection}")
+<span class="output"># Output: c1 & c2 = Counter({'a': 1, 'b': 2})</span>
+
+# Union (|) - maximum des comptes (pour toutes les clés avec compte > 0 dans au moins un)
+union = c1 | c2
+print(f"c1 | c2 = {union}")
+<span class="output"># Output: c1 | c2 = Counter({'a': 4, 'b': 3, 'c': 1, 'e': 1})</span></code></pre>
+            <p class="note">
+                <strong>Note importante :</strong> Les opérations <code>+</code>, <code>-</code>, <code>&</code>, <code>|</code> créent de <em>nouveaux</em> objets <code>Counter</code> et ne gardent que les éléments avec des comptes strictement positifs. Les méthodes <code>update()</code> et <code>subtract()</code> modifient le <code>Counter</code> <em>en place</em> et peuvent générer des comptes nuls ou négatifs.
+            </p>
+        </section>
+
+        <!-- Example Section -->
+        <section id="example">
+            <h2>Exemple Pratique : Compter les Mots d'un Fichier</h2>
+            <p>
+                Imaginons que nous ayons un fichier texte <code>mon_fichier.txt</code> et que nous voulions compter les mots qu'il contient.
+            </p>
+            <pre><code class="language-python">import re # Pour une meilleure gestion de la ponctuation
+from collections import Counter # Assurez-vous qu'il est importé
+import os # Pour gérer le fichier
+
+# Contenu simulé du fichier
+contenu_fichier = """
+Ceci est un exemple de texte.
+Le texte contient des mots, et certains mots se répètent.
+Exemple de répétition : texte et mots.
+"""
+
+# Nom du fichier temporaire
+nom_fichier = "mon_fichier_temp.txt"
+
+# Écriture simulée dans un fichier (pour l'exemple)
+with open(nom_fichier, "w", encoding="utf-8") as f:
+    f.write(contenu_fichier)
+
+# Lecture et comptage
+try:
+    with open(nom_fichier, "r", encoding="utf-8") as f:
+        texte_brut = f.read()
+
+    # 1. Mettre en minuscule pour ne pas différencier "Texte" et "texte"
+    texte_lower = texte_brut.lower()
+
+    # 2. Extraire les mots (ignorer ponctuation et chiffres simples)
+    #    Une expression régulière simple pour trouver des séquences de lettres accentuées incluses
+    mots = re.findall(r'\b[a-zàâçéèêëîïôûùüÿæœ]+\b', texte_lower)
+
+    # 3. Compter les mots avec Counter
+    compteur_mots = Counter(mots)
+
+    # 4. Afficher les résultats
+    print(f"\nCompte de tous les mots :")
+    print(compteur_mots)
+
+    print("\nLes 3 mots les plus fréquents :")
+    print(compteur_mots.most_common(3))
+
+    print(f"\nNombre d'occurrences du mot 'texte' : {compteur_mots['texte']}")
+    print(f"Nombre d'occurrences du mot 'python' : {compteur_mots['python']}") # Ce mot n'existe pas
+
+except FileNotFoundError:
+    print(f"Erreur : Le fichier '{nom_fichier}' n'a pas été trouvé.")
+finally:
+    # Nettoyage (supprimer le fichier créé pour l'exemple)
+    if os.path.exists(nom_fichier):
+        os.remove(nom_fichier)
+        print(f"\nFichier temporaire '{nom_fichier}' supprimé.")
+
+</code></pre>
+            <p><strong>Explication de l'exemple :</strong></p>
+            <ol>
+                <li>On lit le contenu du fichier.</li>
+                <li>On convertit tout en minuscules pour que le comptage soit insensible à la casse.</li>
+                <li>On utilise <code>re.findall()</code> avec une expression régulière (<code>\b[a-zàâçéèêëîïôûùüÿæœ]+\b</code>) pour extraire uniquement les séquences de lettres (les mots), en ignorant la ponctuation et les espaces. <code>\b</code> représente une frontière de mot.</li>
+                <li>On passe la liste de mots obtenue à <code>Counter</code>.</li>
+                <li>On utilise <code>most_common()</code> pour voir les mots les plus fréquents et on accède directement au compte d'un mot spécifique.</li>
+            </ol>
+        </section>
+
+        <!-- Q&A Section -->
+        <section id="qa">
+            <h2>Questions / Réponses (Q&A)</h2>
+            <dl class="qa-section">
+                <dt>Q1 : Qu'est-ce que <code>collections.Counter</code> fondamentalement ?</dt>
+                <dd><strong>R1 :</strong> C'est une sous-classe de dictionnaire (<code>dict</code>) optimisée pour compter la fréquence d'objets hachables dans un itérable ou une collection. Elle stocke les objets comme clés et leurs comptes comme valeurs.</dd>
+
+                <dt>Q2 : Quelle est la principale différence entre accéder à une clé inexistante dans un <code>dict</code> standard et dans un <code>Counter</code> ?</dt>
+                <dd><strong>R2 :</strong> Un <code>dict</code> standard lève une exception <code>KeyError</code> si la clé n'existe pas. Un <code>Counter</code> renvoie <code>0</code> dans ce cas, ce qui évite d'avoir à gérer l'exception ou à utiliser <code>dict.get(key, 0)</code>.</dd>
+
+                <dt>Q3 : Comment créer un <code>Counter</code> qui compte les caractères d'une chaîne <code>s = "Mississippi"</code> ?</dt>
+                <dd><strong>R3 :</strong> Simplement en passant la chaîne au constructeur : <code>compteur = Counter(s)</code>. Le résultat serait <code>Counter({'i': 4, 's': 4, 'p': 2, 'M': 1})</code>.</dd>
+
+                <dt>Q4 : À quoi sert la méthode <code>most_common(n)</code> ?</dt>
+                <dd><strong>R4 :</strong> Elle renvoie une liste de tuples <code>(élément, compte)</code> pour les <code>n</code> éléments ayant les comptes les plus élevés, triée par compte décroissant. Si <code>n</code> est omis, elle renvoie tous les éléments triés par fréquence.</dd>
+
+                <dt>Q5 : Quelle est la différence entre <code>c1.update(c2)</code> et <code>c3 = c1 + c2</code> si <code>c1</code> et <code>c2</code> sont des <code>Counter</code> ?</dt>
+                <dd>
+                    <strong>R5 :</strong>
+                    <ul>
+                        <li><code>c1.update(c2)</code> modifie <code>c1</code> <em>en place</em>. Elle <em>ajoute</em> les comptes de <code>c2</code> aux comptes existants dans <code>c1</code>. Les comptes peuvent devenir nuls ou négatifs.</li>
+                        <li><code>c3 = c1 + c2</code> crée un <em>nouvel</em> objet <code>Counter</code> <code>c3</code>. Elle additionne les comptes de <code>c1</code> et <code>c2</code> pour les clés communes et inclut les clés uniques des deux compteurs. Cette opération ne conserve que les éléments dont le compte final est <em>strictement positif</em> (>= 1).</li>
+                    </ul>
+                </dd>
+
+                <dt>Q6 : Comment obtenir une liste de tous les éléments d'un <code>Counter</code>, où chaque élément est répété selon son compte ?</dt>
+                <dd><strong>R6 :</strong> Utilisez la méthode <code>elements()</code>. Comme elle renvoie un itérateur, vous pouvez le convertir en liste si nécessaire : <code>liste_elements = list(mon_compteur.elements())</code>.</dd>
+
+                <dt>Q7 : Les <code>Counter</code> peuvent-ils avoir des comptes négatifs ou nuls ?</dt>
+                <dd><strong>R7 :</strong> Oui. Bien que la création initiale à partir d'un itérable ne produise que des comptes positifs, les méthodes <code>subtract()</code> ou <code>update()</code> (si l'argument contient des négatifs) peuvent entraîner des comptes nuls ou négatifs. Les opérations arithmétiques (<code>+</code>, <code>-</code>, <code>&</code>, <code>|</code>) tendent cependant à ne conserver que les résultats positifs dans le <code>Counter</code> final. Un élément avec un compte de 0 ou moins n'est généralement pas inclus dans l'affichage standard du <code>Counter</code> ou dans les résultats de <code>most_common()</code>, mais la clé existe toujours avec sa valeur nulle/négative jusqu'à ce qu'elle soit explicitement supprimée (par <code>del</code>) ou qu'une opération la remette à zéro ou plus.</dd>
+            </dl>
+        </section>
+
+        <!-- Conclusion Section -->
+        <section id="conclusion">
+            <h2>Conclusion</h2>
+            <p>
+                <code>collections.Counter</code> est un outil puissant et pratique en Python pour toutes les tâches liées au comptage de fréquences. Sa syntaxe simple, ses méthodes utiles (<code>most_common</code>, <code>elements</code>) et son comportement intuitif (retourner 0 pour les clés manquantes, opérations arithmétiques) en font un choix privilégié par rapport à l'implémentation manuelle avec des dictionnaires standards. N'hésitez pas à l'utiliser dès que vous avez besoin de savoir "combien de fois chaque chose apparaît".
+            </p>
+        </section>
+
+    </div> <!-- /container -->
+</body>
+</html>
