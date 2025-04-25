@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLTK: ConditionalFreqDist()</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 25px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #0056b3;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 10px;
+            margin-top: 0;
+            font-size: 1.8em;
+        }
+        h2 {
+            color: #0056b3;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .library-tag {
+            background-color: #007bff;
+            color: white;
+            padding: 3px 7px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .function-name {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 1.1em;
+            vertical-align: middle;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        pre {
+            background-color: #282c34; /* Fond sombre */
+            color: #abb2bf; /* Texte clair */
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto; /* Défilement horizontal */
+            font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        code.language-python {
+            white-space: pre; /* Conserve les espaces et retours à la ligne */
+        }
+        .note {
+            font-size: 0.9em;
+            color: #dc3545; /* Rouge pour attirer l'attention */
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+        .note strong {
+            color: #721c24;
+        }
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.85em;
+            color: #adb5bd;
+            border-top: 1px solid #dee2e6;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <span class="library-tag">nltk</span>
+            <span class="function-name">ConditionalFreqDist()</span>
+        </h1>
+
+        <h2>Explication</h2>
+        <p>
+            Calcule une distribution de fréquence conditionnée par un contexte. Utile pour les modèles de langue simples ou l'analyse de bigrammes. Par exemple, elle permet de compter la fréquence d'apparition d'un mot B sachant que le mot A le précède.
+        </p>
+
+        <h2>Exemple</h2>
+        <p>L'exemple suivant utilise des bigrammes (paires de mots consécutifs) du corpus "genesis" de NLTK pour trouver les mots qui suivent le plus souvent le mot "living".</p>
+        <pre><code class="language-python">
+import nltk
+# Téléchargements potentiellement nécessaires :
+# nltk.download('genesis') # Corpus de la Genèse
+# nltk.download('punkt')   # Pour le tokenizer utilisé par .words()
+
+from nltk.corpus import genesis
+from nltk import ConditionalFreqDist
+
+# Assurez-vous que les données nécessaires sont téléchargées
+try:
+    # Mots de la Genèse en anglais (ou autre langue disponible)
+    words = genesis.words('english-web.txt')
+except LookupError:
+    print("Erreur: Le corpus 'genesis' ou 'punkt' n'est pas trouvé.")
+    print("Exécutez nltk.download('genesis') et nltk.download('punkt') dans un interpréteur Python.")
+    words = [] # Initialiser à vide pour éviter d'autres erreurs
+
+if words:
+    # Créer les bigrammes (paires de mots consécutifs)
+    # Ex: [('In', 'the'), ('the', 'beginning'), ('beginning', 'God'), ...]
+    bigrams = list(nltk.bigrams(words))
+
+    # Créer la distribution conditionnelle
+    # La condition est le premier mot du bigramme, l'événement est le second mot.
+    # Pour chaque condition (mot1), on compte la fréquence des événements (mot2)
+    cfd = ConditionalFreqDist(bigrams)
+
+    # Explorer la distribution
+    condition_word = 'living'
+    print(f"Condition (mot précédent): '{condition_word}'")
+
+    # Obtenir la distribution de fréquence pour la condition donnée
+    if condition_word in cfd:
+        freq_dist_for_condition = cfd[condition_word]
+
+        print(f"\\nMots qui suivent '{condition_word}':")
+        # freq_dist_for_condition est un objet FreqDist
+        print(list(freq_dist_for_condition.keys())) # Affiche les mots possibles après 'living'
+
+        print(f"\\nFréquence des mots suivant '{condition_word}' (Top 5):")
+        print(freq_dist_for_condition.most_common(5)) # Les 5 mots les plus fréquents
+
+        print(f"\\nFréquence du mot 'creature' après '{condition_word}':")
+        print(freq_dist_for_condition['creature'])
+    else:
+        print(f"Le mot '{condition_word}' n'apparaît pas comme condition (premier mot d'un bigramme) dans ce corpus.")
+
+# Exemple de sortie possible (peut varier légèrement selon la version de NLTK/corpus):
+# Condition (mot précédent): 'living'
+#
+# Mots qui suivent 'living':
+# ['creature', ',', 'soul', '.', 'thing', 'God', ';']
+#
+# Fréquence des mots suivant 'living' (Top 5):
+# [('creature', 8), (',', 2), ('soul', 1), ('.', 1), ('thing', 1)]
+#
+# Fréquence du mot 'creature' après 'living':
+# 8
+
+        </code></pre>
+
+        <h2>Note NLTK</h2>
+        <div class="note">
+            <strong>Important :</strong> Cette fonction, et en particulier l'exemple fourni, repose sur des données de la bibliothèque NLTK qui ne sont pas toujours incluses par défaut. Vous pourriez avoir besoin d'exécuter les commandes suivantes dans un interpréteur Python pour télécharger les données nécessaires :
+            <pre><code>import nltk
+nltk.download('genesis')
+nltk.download('punkt')</code></pre>
+        </div>
+
+        <footer>
+            Explication et exemple pour nltk.ConditionalFreqDist().
+        </footer>
+    </div>
+</body>
+</html>
